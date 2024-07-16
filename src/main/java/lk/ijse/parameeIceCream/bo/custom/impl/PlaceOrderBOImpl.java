@@ -4,6 +4,7 @@ import lk.ijse.parameeIceCream.bo.custom.PlaceOrderBO;
 import lk.ijse.parameeIceCream.dao.DAOFactory;
 import lk.ijse.parameeIceCream.dao.custom.CustomerDAO;
 import lk.ijse.parameeIceCream.dao.custom.OrderDAO;
+import lk.ijse.parameeIceCream.dao.custom.OrderDetailDAO;
 import lk.ijse.parameeIceCream.dao.custom.ProductDAO;
 import lk.ijse.parameeIceCream.db.DbConnection;
 import lk.ijse.parameeIceCream.dto.CustomerDTO;
@@ -25,6 +26,8 @@ public class PlaceOrderBOImpl implements PlaceOrderBO {
     ProductDAO productDAO = (ProductDAO) DAOFactory.getDAOFactory().getDAO(DAOFactory.DAOTypes.PRODUCTDAO);
 
     CustomerDAO customerDAO = (CustomerDAO) DAOFactory.getDAOFactory().getDAO(DAOFactory.DAOTypes.CUSTOMERDAO);
+
+    OrderDetailDAO orderDetailDAO = (OrderDetailDAO) DAOFactory.getDAOFactory().getDAO(DAOFactory.DAOTypes.ORDERDETAILSDAO);
 
 
     @Override
@@ -57,14 +60,18 @@ public class PlaceOrderBOImpl implements PlaceOrderBO {
         }
 
         try {
-
+            System.out.println("in order - "+order);
             boolean isOrderSaved = orderDAO.save(order);//OrderRepo.save(order);
             if (isOrderSaved) {
-                boolean isQtyUpdated = productDAO.update(orderDetails);//ProductRepo.update(orderDetailEn);
+                System.out.println("in od up - "+orderDetailEn);
+                boolean isQtyUpdated = productDAO.updateQ(orderDetailEn);//ProductRepo.update(orderDetailEn);
 
                 if (isQtyUpdated) {
-                    boolean isOrderDetailSaved = OrderDetailRepo.save(orderDetailEn);
+                    System.out.println(isQtyUpdated  +"\n -- in od up -- "+orderDetailEn);
+                    boolean isOrderDetailSaved = orderDetailDAO.save(orderDetailEn);
+                    System.out.println( "is save orDetail - " + isOrderDetailSaved);
                     if (isOrderDetailSaved) {
+                        System.out.println("OrderDetail save  "+isOrderDetailSaved);
                         connection.commit();
                         return true;
                     }

@@ -84,8 +84,14 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
 
     @Override
     public boolean save(List<OrderDetail> odList) throws SQLException, ClassNotFoundException {
+        System.out.println("save(List<OrderDetail> odList)- "+odList);
         for (OrderDetail od : odList) {
+
+            System.out.println("save or - "+od);
+
             boolean isSaved = save(od);
+
+            System.out.println("is saved - "+isSaved);
             if(!isSaved) {
                 return false;
             }

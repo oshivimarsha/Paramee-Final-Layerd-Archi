@@ -6,6 +6,7 @@ import lk.ijse.parameeIceCream.dao.custom.DepartmentDAO;
 import lk.ijse.parameeIceCream.dao.custom.IngredientDAO;
 import lk.ijse.parameeIceCream.dao.custom.IngredientsProductDAO;
 import lk.ijse.parameeIceCream.dao.custom.ProductDAO;
+import lk.ijse.parameeIceCream.db.DbConnection;
 import lk.ijse.parameeIceCream.dto.DepartmentDTO;
 import lk.ijse.parameeIceCream.dto.IngredientDTO;
 import lk.ijse.parameeIceCream.dto.IngredientsProductDTO;
@@ -15,7 +16,9 @@ import lk.ijse.parameeIceCream.entity.Ingredient;
 import lk.ijse.parameeIceCream.entity.IngredientsProduct;
 import lk.ijse.parameeIceCream.entity.Product;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageProductBOImpl implements ManageProductBO {
@@ -64,7 +67,45 @@ public class ManageProductBOImpl implements ManageProductBO {
 
     @Override
     public boolean palceProduct(ProductDTO productDTO, List<IngredientsProductDTO> ingredientsProductDTO) throws SQLException, ClassNotFoundException {
-        return false;
+        Connection connection = DbConnection.getInstance().getConnection();
+        connection.setAutoCommit(false);
+
+        Product product = new Product(productDTO.getId(),productDTO.getName(),productDTO.getCategory(),productDTO.getDescription(),productDTO.getQtyAvailable(),productDTO.getUnitPrice(),productDTO.getDepartmentId(),productDTO.getPath());
+        List<IngredientsProduct> ingredientsProducts = new ArrayList<>();
+
+        for(IngredientsProductDTO ingredientsProduct:ingredientsProductDTO){
+            ingredientsProducts.add(new IngredientsProduct(ingredientsProduct.getProductId(),ingredientsProduct.getIngredientId(),ingredientsProduct.getQty(),ingredientsProduct.getUnitPrice()));
+        }
+
+        try {
+            //  System.out.println("product -  "+cp.getProduct());
+            boolean isProductSaved = productDAO.save(product);//ProductRepo.save(cp.getProduct());
+            //  System.out.println(isProductSaved);
+            if (isProductSaved) {
+                //   System.out.println( "IP List = "+cp.getIPList());
+                boolean isQtyUpdated = ingredientDAO.updateMin(ingredientsProducts);//IngredientRepo.update(cp.getIPList());
+
+                //   System.out.println(isQtyUpdated);
+                if (isQtyUpdated) {
+                    //   System.out.println(cp.getIPList());
+                    System.out.println(ingredientsProducts);
+                    boolean isProductrDetailSaved = ingredientsProductDAO.save(ingredientsProducts);//IngredientsProductRepo.save(cp.getIPList());
+                    System.out.println("isProductrDetailSaved - "+isProductrDetailSaved);
+                    //  System.out.println(isProductrDetailSaved);
+                    if (isProductrDetailSaved) {
+                        connection.commit();
+                        return true;
+                    }
+                }
+            }
+            connection.rollback();
+            return false;
+        } catch (Exception e) {
+            connection.rollback();
+            return false;
+        } finally {
+            connection.setAutoCommit(true);
+        }
     }
 
     @Override

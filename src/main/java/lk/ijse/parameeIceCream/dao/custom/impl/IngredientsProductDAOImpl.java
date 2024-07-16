@@ -4,6 +4,7 @@ import lk.ijse.parameeIceCream.dao.SQLUtill;
 import lk.ijse.parameeIceCream.dao.custom.IngredientsProductDAO;
 import lk.ijse.parameeIceCream.db.DbConnection;
 import lk.ijse.parameeIceCream.entity.IngredientsProduct;
+import lk.ijse.parameeIceCream.entity.OrderDetail;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,7 +53,16 @@ public class IngredientsProductDAOImpl implements IngredientsProductDAO {
 
     @Override
     public boolean save(List<IngredientsProduct> ipList) throws SQLException, ClassNotFoundException {
-        return false;
+        for (IngredientsProduct ip : ipList) {
+            System.out.println(ip.getProductId() + "  save ingre - " + ip.getQty());
+
+            boolean isUpdateQty = save(ip);
+            System.out.println("save---- "+isUpdateQty);
+            if(!isUpdateQty) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

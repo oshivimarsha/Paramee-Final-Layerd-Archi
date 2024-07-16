@@ -4,6 +4,7 @@ import lk.ijse.parameeIceCream.dao.SQLUtill;
 import lk.ijse.parameeIceCream.dao.custom.ProductDAO;
 import lk.ijse.parameeIceCream.db.DbConnection;
 import lk.ijse.parameeIceCream.entity.Customer;
+import lk.ijse.parameeIceCream.entity.OrderDetail;
 import lk.ijse.parameeIceCream.entity.Product;
 
 import java.sql.Connection;
@@ -38,13 +39,14 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public boolean save(Product product) throws SQLException, ClassNotFoundException {
-        boolean result = SQLUtill.execute( "INSERT INTO product VALUES(?, ?, ?, ?, ?, ?, ?, ?)", product.getId(), product.getName(), product.getCategory(), product.getDescription(), product.getQtyAvailable(), product.getUnitPrice(), product.getDescription(), product.getPath());
+        System.out.println("save product - "+product);
+        boolean result = SQLUtill.execute( "INSERT INTO product VALUES(?, ?, ?, ?, ?, ?, ?, ?)", product.getId(), product.getName(), product.getCategory(), product.getDescription(), product.getQtyAvailable(), product.getUnitPrice(), product.getDepartmentId(), product.getPath());
         return result;
     }
 
     @Override
     public boolean update(Product product) throws SQLException, ClassNotFoundException {
-        boolean result = SQLUtill.execute("UPDATE product SET  name = ?, category = ?, description = ?, qtyAvailable = ?, unitPrice = ?, departmentId = ?, path = ? WHERE productId = ?", product.getName(), product.getCategory(), product.getDescription(), product.getQtyAvailable(), product.getUnitPrice(), product.getDescription(), product.getPath(), product.getId());
+        boolean result = SQLUtill.execute("UPDATE product SET  name = ?, category = ?, description = ?, qtyAvailable = ?, unitPrice = ?, departmentId = ?, path = ? WHERE productId = ?", product.getName(), product.getCategory(), product.getDescription(), product.getQtyAvailable(), product.getUnitPrice(), product.getDepartmentId(), product.getPath(), product.getId());
         return result;
     }
 
@@ -137,10 +139,23 @@ public class ProductDAOImpl implements ProductDAO {
         }
         return nameList;
     }
+    @Override
+    public boolean updateQ(List<OrderDetail> isList) throws SQLException,ClassNotFoundException {
+        for (OrderDetail is : isList) {
+            System.out.println(is.getProductId() + "  qtyUpdate Item - " + is.getQty());
+
+            boolean isUpdateQty = updateQty(is.getProductId(), is.getQty());
+            System.out.println("update---- "+isUpdateQty);
+            if(!isUpdateQty) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public boolean updateQty(String Code, int qty) throws SQLException, ClassNotFoundException {
-        boolean result = SQLUtill.execute("UPDATE product SET qtyAvailable = qtyAvailable - ? WHERE productId = ?", Code, qty);
+        boolean result = SQLUtill.execute("UPDATE product SET qtyAvailable = qtyAvailable - ? WHERE productId = ?", qty,Code);
         return result;
     }
 

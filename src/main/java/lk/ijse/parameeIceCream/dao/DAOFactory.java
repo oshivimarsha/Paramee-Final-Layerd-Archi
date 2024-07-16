@@ -37,6 +37,8 @@ public class DAOFactory {
                 return new LoginDAOImpl();
             case INGREDIENTDAO:
                 return new IngredientDAOImpl();
+            case ORDERDETAILSDAO:
+                return new OrderDetailDAOImpl();
             case PRODUCTDAO:
                 return new ProductDAOImpl();
             case ORDERDAO:

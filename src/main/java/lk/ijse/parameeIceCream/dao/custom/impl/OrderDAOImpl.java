@@ -41,9 +41,16 @@ public class OrderDAOImpl implements OrderDAO {
             String id = rst.getString("orderId");
             String[] split = id.split("O");  //" ", "2"
             int idNum = Integer.parseInt(split[1]);
-            return "O" + ++idNum;
+
+            if(idNum >= 1){
+                return "O" + 0 + 0 + ++idNum;
+            }else if(idNum >= 9){
+                return "O" + 0 + ++idNum;
+            } else if(idNum >= 99){
+                return "O" + ++idNum;
+            }
         }
-        return "O1";
+        return "O001";
     }
 
     @Override

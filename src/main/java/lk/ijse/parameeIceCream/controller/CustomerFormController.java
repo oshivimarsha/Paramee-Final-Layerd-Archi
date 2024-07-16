@@ -91,7 +91,7 @@ public class CustomerFormController {
 
             tblCustomerCart.setItems(obList);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
     }
 

@@ -51,6 +51,7 @@ public class IngredientDAOImpl implements IngredientDAO {
         for (IngredientsProduct ip : ipList) {
             System.out.println("qtyUpdate Item");
             boolean isUpdateQty = updateQtyMin(ip.getIngredientId(), ip.getQty());
+            System.out.println("isupdateQty - "+isUpdateQty);
             if(!isUpdateQty) {
                 return false;
             }
@@ -72,13 +73,13 @@ public class IngredientDAOImpl implements IngredientDAO {
 
     @Override
     public boolean updateQtyMin(String id, int qty) throws SQLException , ClassNotFoundException{
-        boolean result = SQLUtill.execute("UPDATE ingredient SET qtyInStock = qtyInStock - ? WHERE ingredientId = ?", id, qty);
+        boolean result = SQLUtill.execute("UPDATE ingredient SET qtyInStock = qtyInStock - ? WHERE ingredientId = ?", qty,id);
         return result;
     }
 
     @Override
     public boolean updateQtyPlus(String id, int qty) throws SQLException, ClassNotFoundException {
-        boolean result = SQLUtill.execute("UPDATE ingredient SET qtyInStock = qtyInStock + ? WHERE ingredientId = ?", id, qty);
+        boolean result = SQLUtill.execute("UPDATE ingredient SET qtyInStock = qtyInStock + ? WHERE ingredientId = ?", qty,id);
         return result;
     }
 
